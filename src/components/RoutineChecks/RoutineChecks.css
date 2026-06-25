@@ -1,0 +1,91 @@
+.routine-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.routine-counter {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.routine-bar-wrap {
+  background: var(--border);
+  border-radius: 99px;
+  height: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.routine-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-green));
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.routine-section { margin-bottom: 12px; }
+
+.routine-sec-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.routine-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 2px;
+}
+
+.routine-item:hover { background: var(--bg-input); }
+
+.routine-item input[type="checkbox"] { display: none; }
+
+.check-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-light);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.routine-item.checked .check-box {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.routine-item.checked .check-box::after {
+  content: '✓';
+  font-size: 10px;
+  color: white;
+  font-weight: 700;
+  position: absolute;
+}
+
+.routine-label {
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: color 0.15s;
+}
+
+.routine-item.checked .routine-label {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}

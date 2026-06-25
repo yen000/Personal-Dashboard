@@ -1,0 +1,87 @@
+.weekly-events {
+  display: flex;
+  flex-direction: column;
+}
+
+.we-badge {
+  font-size: 10px;
+  background: rgba(251, 191, 36, 0.1);
+  color: var(--accent-yellow);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.week-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.week-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: background 0.15s;
+}
+
+.week-row:hover { background: var(--bg-input); }
+
+.week-row.today {
+  background: rgba(129, 140, 248, 0.07);
+  border-color: rgba(129, 140, 248, 0.22);
+}
+
+.row-day-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.row-day-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.today-num { color: var(--accent); }
+
+.row-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: 1;
+}
+
+.event-chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chip-blue   { background: rgba(96, 165, 250, 0.15);  color: #93c5fd; }
+.chip-accent { background: rgba(129, 140, 248, 0.15); color: #a5b0fc; }
+.chip-pink   { background: rgba(244, 114, 182, 0.15); color: #f9a8d4; }
+.chip-green  { background: rgba(52, 211, 153, 0.15);  color: #6ee7b7; }
+
+.no-events {
+  font-size: 13px;
+  color: var(--text-muted);
+}

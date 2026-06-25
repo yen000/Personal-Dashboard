@@ -1,0 +1,94 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0c0e16;
+  --bg-card: #12151f;
+  --bg-card-hover: #171b27;
+  --bg-input: #1a1e2e;
+  --text-primary: #f2f5f9;
+  --text-secondary: #c4cdd8;
+  --text-muted: #8896a6;
+  --accent: #818cf8;
+  --accent-dim: #2d2f6b;
+  --accent-green: #34d399;
+  --accent-red: #f87171;
+  --accent-yellow: #fbbf24;
+  --accent-blue: #60a5fa;
+  --accent-pink: #f472b6;
+  --accent-orange: #fb923c;
+  --border: #1e2535;
+  --border-light: #252d3d;
+  --card-radius: 12px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+#root { min-height: 100vh; }
+
+.dashboard {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Row 1: [Profile | DateTime]  +  [Goals wide] ── */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;   /* left third = pair, right two-thirds = goals */
+  gap: 16px;
+  align-items: stretch;
+}
+
+.top-left-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── Rows 2–3: 3 columns × 2 rows ── */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* Card base */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .icon { font-size: 17px; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }

@@ -1,0 +1,115 @@
+.todo-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-add {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.todo-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 7px 10px;
+  outline: none;
+  font-family: inherit;
+}
+
+.todo-input:focus { border-color: var(--accent); }
+
+.priority-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 7px 6px;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.todo-add-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 20px;
+  width: 34px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+.todo-add-btn:hover { opacity: 0.8; }
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.todo-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 28px;
+  font-style: italic;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+}
+
+.priority-badge {
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.todo-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.todo-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.todo-remove:hover { color: var(--accent-red); }
+
+.priority-red    { border-left-color: var(--accent-red); }
+.priority-yellow { border-left-color: var(--accent-yellow); }
+.priority-green  { border-left-color: var(--accent-green); }
+
+.pb-red    { color: var(--accent-red); }
+.pb-yellow { color: var(--accent-yellow); }
+.pb-green  { color: var(--accent-green); }
