@@ -1,25 +1,35 @@
 import { useState } from 'react'
 import './RoutineChecks.css'
 
-const ROUTINES = [
-  { id: 'wake',      label: 'Wake up on time',         section: 'morning' },
-  { id: 'exercise',  label: 'Exercise / stretch',       section: 'morning' },
-  { id: 'breakfast', label: 'Eat breakfast',            section: 'morning' },
-  { id: 'cpp',       label: 'C++ practice (30 min+)',   section: 'day' },
-  { id: 'music',     label: 'Music practice (20 min+)', section: 'day' },
-  { id: 'water',     label: 'Drink 8 glasses of water', section: 'day' },
-  { id: 'review',    label: 'Review the day',           section: 'evening' },
-  { id: 'read',      label: 'Read / learn something',   section: 'evening' },
-  { id: 'sleep',     label: 'Sleep before midnight',    section: 'evening' },
-]
+const TIMES = ['morning', 'evening', 'night']
+const TIME_LABELS = { morning: '☀️ Morning', evening: '🌆 Evening', night: '🌙 Night' }
 
-const SECTIONS = [
-  { key: 'morning', label: '☀️ Morning' },
-  { key: 'day',     label: '⚡ During the Day' },
-  { key: 'evening', label: '🌙 Evening' },
-]
+const DEFAULT_ITEMS = {
+  life: [
+    { id: 'l-m-1', label: 'Drink water',    time: 'morning' },
+    { id: 'l-m-2', label: 'Take vitamin',   time: 'morning' },
+    { id: 'l-e-1', label: 'Drink water',    time: 'evening' },
+    { id: 'l-n-1', label: 'Leg massage',    time: 'night' },
+    { id: 'l-n-2', label: 'Face mask',      time: 'night' },
+    { id: 'l-n-3', label: 'Apply ointment', time: 'night' },
+  ],
+  work: [
+    { id: 'w-m-1', label: 'Daily LeetCode',      time: 'morning' },
+    { id: 'w-m-2', label: 'Trading book',         time: 'morning' },
+    { id: 'w-m-3', label: 'Work',                 time: 'morning' },
+    { id: 'w-e-1', label: 'LeetCode ×2',          time: 'evening' },
+    { id: 'w-e-2', label: 'Work',                 time: 'evening' },
+    { id: 'w-n-1', label: 'Trading QA book',      time: 'night' },
+    { id: 'w-n-2', label: 'C++ implementation',   time: 'night' },
+  ],
+}
 
 const TODAY = new Date().toDateString()
+
+function loadItems() {
+  try { return JSON.parse(localStorage.getItem('routine_items')) || DEFAULT_ITEMS }
+  catch { return DEFAULT_ITEMS }
+}
 
 function loadChecked() {
   try {
@@ -28,8 +38,49 @@ function loadChecked() {
   } catch { return {} }
 }
 
+function TimeBlock({ time, items, checked, onToggle, onDelete, onAdd }) {
+  const [input, setInput] = useState('')
+
+  const handleAdd = () => {
+    const text = input.trim()
+    if (!text) return
+    onAdd(time, text)
+    setInput('')
+  }
+
+  return (
+    <div className="time-block">
+      <div className="time-label">{TIME_LABELS[time]}</div>
+      {items.map(item => (
+        <div key={item.id} className={`routine-item ${checked[item.id] ? 'checked' : ''}`}>
+          <span className="check-box" onClick={() => onToggle(item.id)} />
+          <span className="routine-label" onClick={() => onToggle(item.id)}>{item.label}</span>
+          <button className="routine-del" onClick={() => onDelete(item.id)}>×</button>
+        </div>
+      ))}
+      <div className="routine-add-row">
+        <input
+          className="routine-add-input"
+          placeholder="Add habit..."
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleAdd()}
+        />
+        <button className="routine-add-btn" onClick={handleAdd}>+</button>
+      </div>
+    </div>
+  )
+}
+
 export default function RoutineChecks() {
+  const [tab, setTab]         = useState('life')
+  const [items, setItems]     = useState(loadItems)
   const [checked, setChecked] = useState(loadChecked)
+
+  const saveItems = (next) => {
+    setItems(next)
+    localStorage.setItem('routine_items', JSON.stringify(next))
+  }
 
   const toggle = (id) => {
     setChecked(prev => {
@@ -39,29 +90,43 @@ export default function RoutineChecks() {
     })
   }
 
-  const doneCount = Object.values(checked).filter(Boolean).length
-  const total = ROUTINES.length
+  const deleteItem = (id) => {
+    saveItems({ life: items.life.filter(i => i.id !== id), work: items.work.filter(i => i.id !== id) })
+  }
+
+  const addItem = (time, label) => {
+    const id = `${tab}-${time}-${Date.now()}`
+    saveItems({ ...items, [tab]: [...items[tab], { id, label, time }] })
+  }
+
+  const tabItems  = items[tab]
+  const doneCount = tabItems.filter(i => checked[i.id]).length
+  const total     = tabItems.length
 
   return (
     <div className="card routine-card">
-      <div className="card-title">
-        <span className="icon">✅</span> Daily Routine
-        <span className="routine-counter">{doneCount}/{total}</span>
+      <div className="card-title"><span className="icon">✅</span> Routine</div>
+
+      <div className="routine-tabs">
+        <button className={`tab-btn ${tab === 'life' ? 'active' : ''}`} onClick={() => setTab('life')}>🌿 Life</button>
+        <button className={`tab-btn ${tab === 'work' ? 'active' : ''}`} onClick={() => setTab('work')}>💼 Work</button>
+        <span className="tab-counter">{doneCount}/{total}</span>
       </div>
+
       <div className="routine-bar-wrap">
-        <div className="routine-bar" style={{ width: `${(doneCount / total) * 100}%` }} />
+        <div className="routine-bar" style={{ width: `${total ? (doneCount / total) * 100 : 0}%` }} />
       </div>
-      {SECTIONS.map(sec => (
-        <div key={sec.key} className="routine-section">
-          <div className="routine-sec-label">{sec.label}</div>
-          {ROUTINES.filter(r => r.section === sec.key).map(item => (
-            <label key={item.id} className={`routine-item ${checked[item.id] ? 'checked' : ''}`}>
-              <input type="checkbox" checked={!!checked[item.id]} onChange={() => toggle(item.id)} />
-              <span className="check-box" />
-              <span className="routine-label">{item.label}</span>
-            </label>
-          ))}
-        </div>
+
+      {TIMES.map(time => (
+        <TimeBlock
+          key={`${tab}-${time}`}
+          time={time}
+          items={tabItems.filter(i => i.time === time)}
+          checked={checked}
+          onToggle={toggle}
+          onDelete={deleteItem}
+          onAdd={addItem}
+        />
       ))}
     </div>
   )

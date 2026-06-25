@@ -27,7 +27,7 @@ function getDailyProblems() {
   const d = new Date()
   let seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()
   const indices = new Set()
-  while (indices.size < 3) {
+  while (indices.size < 2) {
     seed = (seed * 1664525 + 1013904223) >>> 0
     indices.add(seed % POOL.length)
   }
@@ -41,7 +41,7 @@ export default function LeetcodeTracker() {
     <div className="card lc-card">
       <div className="card-title">
         <span className="icon">💻</span> LeetCode Daily
-        <span className="lc-meta">3 problems · refreshes daily</span>
+        <span className="lc-meta">2 problems · refreshes daily</span>
       </div>
       <div className="lc-list">
         {problems.map((p, i) => (

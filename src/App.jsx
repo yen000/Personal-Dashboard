@@ -8,6 +8,7 @@ import LeetcodeTracker from './components/LeetcodeTracker/LeetcodeTracker'
 import FinancialStatus from './components/FinancialStatus/FinancialStatus'
 import TodoList from './components/TodoList/TodoList'
 import CppArticle from './components/CppArticle/CppArticle'
+import SystemDesign from './components/SystemDesign/SystemDesign'
 
 export default function App() {
   return (
@@ -22,14 +23,21 @@ export default function App() {
         <Goals />
       </div>
 
-      {/* Row 2–3: 3×2 grid */}
+      {/* Main 3-column grid */}
       <div className="main-grid">
-        <WeeklyEvents />
-        <RoutineChecks />
-        <LeetcodeTracker />
-        <FinancialStatus />
-        <TodoList />
-        <CppArticle />
+        <div className="col-panel">
+          <WeeklyEvents />
+          <FinancialStatus />
+        </div>
+        <div className="col-panel">
+          <RoutineChecks />
+          <TodoList />
+        </div>
+        <div className="col-panel">
+          <LeetcodeTracker />
+          <CppArticle />
+          <SystemDesign />
+        </div>
       </div>
 
     </div>

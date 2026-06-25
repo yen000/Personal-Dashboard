@@ -60,10 +60,17 @@ body {
   gap: 16px;
 }
 
-/* ── Rows 2–3: 3 columns × 2 rows ── */
+/* ── Main 3-column grid ── */
 .main-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.col-panel {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
