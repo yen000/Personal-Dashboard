@@ -3,36 +3,41 @@
   flex-direction: column;
 }
 
-/* ── Tabs ── */
+/* ── Tabs (pill/segment style matching SystemDesign) ── */
 .cpp-tabs {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 14px;
+  background: var(--bg-input);
+  border-radius: 8px;
+  padding: 3px;
 }
 
 .cpp-tab {
-  background: var(--bg-input);
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  color: var(--text-secondary);
+  flex: 1;
+  padding: 5px 0;
   font-size: 12px;
   font-weight: 500;
-  padding: 5px 14px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 5px;
 }
 
-.cpp-tab:hover { border-color: var(--accent); color: var(--text-primary); }
+.cpp-tab:hover { color: var(--text-secondary); }
 
 .cpp-tab.active {
-  background: rgba(129, 140, 248, 0.12);
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--bg-card);
+  color: var(--text-primary);
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .cpp-saved-badge {
@@ -154,17 +159,8 @@
   cursor: default;
 }
 
-/* ── Good Resources ── */
-.cpp-links-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.cpp-links {
+/* ── Sources tab ── */
+.cpp-sources {
   display: flex;
   flex-direction: column;
   gap: 6px;

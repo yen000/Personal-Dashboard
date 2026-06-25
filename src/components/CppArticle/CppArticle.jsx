@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './CppArticle.css'
 import { DAILY_ARTICLE } from './cppArticleData'
 
-const GOOD_RESOURCES = [
+const SOURCES = [
   { title: 'TJSW on Medium', desc: 'C++ deep-dives and practical guides', url: 'https://tjsw.medium.com' },
   { title: 'C++ Stories',    desc: 'Modern C++ tips and best practices',  url: 'https://www.cppstories.com' },
 ]
@@ -27,26 +27,28 @@ export default function CppArticle() {
   }
 
   const removeLink = (id) => persist(saved.filter(l => l.id !== id))
-
   const isSaved = (url) => saved.some(l => l.url === url)
 
   return (
     <div className="card cpp-card">
       <div className="card-title"><span className="icon">⚡</span> C++ Daily</div>
 
-      {/* ── Tabs ── */}
+      {/* ── Tabs (pill style matching SystemDesign) ── */}
       <div className="cpp-tabs">
         <button className={`cpp-tab ${tab === 'daily' ? 'active' : ''}`} onClick={() => setTab('daily')}>
           Daily
+        </button>
+        <button className={`cpp-tab ${tab === 'sources' ? 'active' : ''}`} onClick={() => setTab('sources')}>
+          Sources
         </button>
         <button className={`cpp-tab ${tab === 'saved' ? 'active' : ''}`} onClick={() => setTab('saved')}>
           Saved {saved.length > 0 && <span className="cpp-saved-badge">{saved.length}</span>}
         </button>
       </div>
 
-      {tab === 'daily' ? (
+      {/* ── Daily ── */}
+      {tab === 'daily' && (
         <>
-          {/* Featured article */}
           <div className="cpp-feat-wrap">
             <a href={DAILY_ARTICLE.url} target="_blank" rel="noopener noreferrer" className="cpp-featured">
               <div className="feat-header">
@@ -67,29 +69,32 @@ export default function CppArticle() {
               {isSaved(DAILY_ARTICLE.url) ? '✓ Saved' : '+ Save'}
             </button>
           </div>
-
-          {/* Good Resources */}
-          <div className="cpp-links-label">Good Resources</div>
-          <div className="cpp-links">
-            {GOOD_RESOURCES.map(link => (
-              <div key={link.title} className="cpp-link-row">
-                <a href={link.url} target="_blank" rel="noopener noreferrer" className="cpp-link-item">
-                  <span className="cpp-link-title">{link.title}</span>
-                  <span className="cpp-link-desc">{link.desc}</span>
-                </a>
-                <button
-                  className={`cpp-save-sm ${isSaved(link.url) ? 'is-saved' : ''}`}
-                  onClick={() => saveLink(link.title, link.url)}
-                  title={isSaved(link.url) ? 'Already saved' : 'Save link'}
-                >
-                  {isSaved(link.url) ? '✓' : '+'}
-                </button>
-              </div>
-            ))}
-          </div>
         </>
-      ) : (
-        /* ── Saved links view ── */
+      )}
+
+      {/* ── Sources ── */}
+      {tab === 'sources' && (
+        <div className="cpp-sources">
+          {SOURCES.map(link => (
+            <div key={link.title} className="cpp-link-row">
+              <a href={link.url} target="_blank" rel="noopener noreferrer" className="cpp-link-item">
+                <span className="cpp-link-title">{link.title}</span>
+                <span className="cpp-link-desc">{link.desc}</span>
+              </a>
+              <button
+                className={`cpp-save-sm ${isSaved(link.url) ? 'is-saved' : ''}`}
+                onClick={() => saveLink(link.title, link.url)}
+                title={isSaved(link.url) ? 'Already saved' : 'Save link'}
+              >
+                {isSaved(link.url) ? '✓' : '+'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Saved ── */}
+      {tab === 'saved' && (
         <div className="saved-list">
           {saved.length === 0 ? (
             <div className="saved-empty">
