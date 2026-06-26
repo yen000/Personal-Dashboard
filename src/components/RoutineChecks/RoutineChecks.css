@@ -4,7 +4,50 @@
   gap: 0;
 }
 
-/* ── Tabs ── */
+/* ── Day type row ── */
+.routine-day-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.day-tab-btn {
+  position: relative;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  letter-spacing: 0.03em;
+}
+
+.day-tab-btn:hover { color: var(--text-secondary); }
+
+.day-tab-btn.active {
+  background: rgba(129, 140, 248, 0.1);
+  border-color: rgba(129, 140, 248, 0.3);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.today-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  margin-left: 5px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+/* ── Period tabs ── */
 .routine-tabs {
   display: flex;
   align-items: center;

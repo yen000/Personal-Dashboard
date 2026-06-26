@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../firebase'
 import './TodoList.css'
 
@@ -18,12 +18,19 @@ export default function TodoList() {
   const [input, setInput]     = useState('')
   const [priority, setPriority] = useState('medium')
   const [loaded, setLoaded]   = useState(false)
+  const [memos, setMemos]     = useState([])
+  const [memoInput, setMemoInput] = useState('')
 
   useEffect(() => {
     getDoc(doc(db, 'todos', 'emergency')).then(snap => {
       setTodos(snap.exists() ? snap.data().list : DEFAULT_TODOS)
       setLoaded(true)
     })
+
+    const unsub = onSnapshot(doc(db, 'memos', 'notes'), snap => {
+      setMemos(snap.exists() ? (snap.data().lines || []) : [])
+    })
+    return unsub
   }, [])
 
   const persist = (list) => {
@@ -38,6 +45,20 @@ export default function TodoList() {
   }
 
   const remove = (id) => persist(todos.filter(t => t.id !== id))
+
+  const addMemo = () => {
+    if (!memoInput.trim()) return
+    const next = [...memos, { id: Date.now(), text: memoInput.trim() }]
+    setDoc(doc(db, 'memos', 'notes'), { lines: next })
+    setMemoInput('')
+  }
+
+  const removeMemo = (id) => {
+    const next = memos.filter(m => m.id !== id)
+    setDoc(doc(db, 'memos', 'notes'), { lines: next })
+  }
+
+  const clearMemos = () => setDoc(doc(db, 'memos', 'notes'), { lines: [] })
 
   const sorted = [...todos].sort(
     (a, b) => PRIORITY_ORDER.indexOf(a.priority) - PRIORITY_ORDER.indexOf(b.priority)
@@ -70,6 +91,34 @@ export default function TodoList() {
             <button className="todo-remove" onClick={() => remove(todo.id)}>×</button>
           </div>
         ))}
+      </div>
+
+      <div className="memo-divider">
+        <span className="memo-divider-label">📝 Memo</span>
+        {memos.length > 0 && (
+          <button className="memo-clear" onClick={clearMemos}>clear all</button>
+        )}
+      </div>
+      <div className="memo-lines">
+        {memos.length === 0
+          ? <div className="memo-empty">No memos — send <code>@ message</code> from Telegram</div>
+          : memos.map(m => (
+              <div key={m.id} className="memo-line">
+                <span className="memo-text">{m.text}</span>
+                <button className="memo-remove" onClick={() => removeMemo(m.id)}>×</button>
+              </div>
+            ))
+        }
+      </div>
+      <div className="memo-add-row">
+        <input
+          className="memo-add-input"
+          placeholder="Add memo..."
+          value={memoInput}
+          onChange={e => setMemoInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && addMemo()}
+        />
+        <button className="memo-add-btn" onClick={addMemo}>+</button>
       </div>
     </div>
   )
