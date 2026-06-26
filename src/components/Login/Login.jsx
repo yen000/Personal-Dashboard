@@ -1,4 +1,4 @@
-import { signInWithPopup } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { auth, provider } from '../../firebase'
 import './Login.css'
 
@@ -12,6 +12,12 @@ export default function Login({ onLogin }) {
         await auth.signOut()
         alert('Access denied.')
         return
+      }
+      const credential = GoogleAuthProvider.credentialFromResult(result)
+      const token = credential?.accessToken
+      if (token) {
+        localStorage.setItem('cal_token', token)
+        localStorage.setItem('cal_token_exp', Date.now() + 3500 * 1000)
       }
       onLogin(result.user)
     } catch (err) {
