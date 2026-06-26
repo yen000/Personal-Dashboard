@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '../../firebase'
 import './CppArticle.css'
 import { DAILY_ARTICLE } from './cppArticleData'
 
@@ -7,18 +9,19 @@ const SOURCES = [
   { title: 'C++ Stories',    desc: 'Modern C++ tips and best practices',  url: 'https://www.cppstories.com' },
 ]
 
-function loadSaved() {
-  try { return JSON.parse(localStorage.getItem('cpp_saved_links')) || [] }
-  catch { return [] }
-}
-
 export default function CppArticle() {
   const [tab, setTab]     = useState('daily')
-  const [saved, setSaved] = useState(loadSaved)
+  const [saved, setSaved] = useState([])
+
+  useEffect(() => {
+    getDoc(doc(db, 'cpp_saved', 'links')).then(snap => {
+      if (snap.exists()) setSaved(snap.data().list || [])
+    })
+  }, [])
 
   const persist = (list) => {
     setSaved(list)
-    localStorage.setItem('cpp_saved_links', JSON.stringify(list))
+    setDoc(doc(db, 'cpp_saved', 'links'), { list })
   }
 
   const saveLink = (title, url) => {
@@ -33,20 +36,14 @@ export default function CppArticle() {
     <div className="card cpp-card">
       <div className="card-title"><span className="icon">⚡</span> C++ Daily</div>
 
-      {/* ── Tabs (pill style matching SystemDesign) ── */}
       <div className="cpp-tabs">
-        <button className={`cpp-tab ${tab === 'daily' ? 'active' : ''}`} onClick={() => setTab('daily')}>
-          Daily
-        </button>
-        <button className={`cpp-tab ${tab === 'sources' ? 'active' : ''}`} onClick={() => setTab('sources')}>
-          Sources
-        </button>
-        <button className={`cpp-tab ${tab === 'saved' ? 'active' : ''}`} onClick={() => setTab('saved')}>
+        <button className={`cpp-tab ${tab === 'daily'   ? 'active' : ''}`} onClick={() => setTab('daily')}>Daily</button>
+        <button className={`cpp-tab ${tab === 'sources' ? 'active' : ''}`} onClick={() => setTab('sources')}>Sources</button>
+        <button className={`cpp-tab ${tab === 'saved'   ? 'active' : ''}`} onClick={() => setTab('saved')}>
           Saved {saved.length > 0 && <span className="cpp-saved-badge">{saved.length}</span>}
         </button>
       </div>
 
-      {/* ── Daily ── */}
       {tab === 'daily' && (
         <>
           <div className="cpp-feat-wrap">
@@ -72,7 +69,6 @@ export default function CppArticle() {
         </>
       )}
 
-      {/* ── Sources ── */}
       {tab === 'sources' && (
         <div className="cpp-sources">
           {SOURCES.map(link => (
@@ -93,7 +89,6 @@ export default function CppArticle() {
         </div>
       )}
 
-      {/* ── Saved ── */}
       {tab === 'saved' && (
         <div className="saved-list">
           {saved.length === 0 ? (

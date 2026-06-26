@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '../../firebase'
 import './RoutineChecks.css'
 
 const TIMES = ['morning', 'evening', 'night']
@@ -14,29 +16,17 @@ const DEFAULT_ITEMS = {
     { id: 'l-n-3', label: 'Apply ointment', time: 'night' },
   ],
   work: [
-    { id: 'w-m-1', label: 'Daily LeetCode',      time: 'morning' },
-    { id: 'w-m-2', label: 'Trading book',         time: 'morning' },
-    { id: 'w-m-3', label: 'Work',                 time: 'morning' },
-    { id: 'w-e-1', label: 'LeetCode ×2',          time: 'evening' },
-    { id: 'w-e-2', label: 'Work',                 time: 'evening' },
-    { id: 'w-n-1', label: 'Trading QA book',      time: 'night' },
-    { id: 'w-n-2', label: 'C++ implementation',   time: 'night' },
+    { id: 'w-m-1', label: 'Daily LeetCode',    time: 'morning' },
+    { id: 'w-m-2', label: 'Trading book',       time: 'morning' },
+    { id: 'w-m-3', label: 'Work',               time: 'morning' },
+    { id: 'w-e-1', label: 'LeetCode ×2',        time: 'evening' },
+    { id: 'w-e-2', label: 'Work',               time: 'evening' },
+    { id: 'w-n-1', label: 'Trading QA book',    time: 'night' },
+    { id: 'w-n-2', label: 'C++ implementation', time: 'night' },
   ],
 }
 
-const TODAY = new Date().toDateString()
-
-function loadItems() {
-  try { return JSON.parse(localStorage.getItem('routine_items')) || DEFAULT_ITEMS }
-  catch { return DEFAULT_ITEMS }
-}
-
-function loadChecked() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('routine_checks') || '{}')
-    return saved.date === TODAY ? (saved.checks || {}) : {}
-  } catch { return {} }
-}
+const TODAY = new Date().toISOString().slice(0, 10)
 
 function TimeBlock({ time, items, checked, onToggle, onDelete, onAdd }) {
   const [input, setInput] = useState('')
@@ -74,24 +64,38 @@ function TimeBlock({ time, items, checked, onToggle, onDelete, onAdd }) {
 
 export default function RoutineChecks() {
   const [tab, setTab]         = useState('life')
-  const [items, setItems]     = useState(loadItems)
-  const [checked, setChecked] = useState(loadChecked)
+  const [items, setItems]     = useState(DEFAULT_ITEMS)
+  const [checked, setChecked] = useState({})
+
+  useEffect(() => {
+    // Load habit definitions
+    getDoc(doc(db, 'routine_config', 'items')).then(snap => {
+      if (snap.exists()) setItems(snap.data())
+    })
+    // Load today's checks
+    getDoc(doc(db, 'routine_checks', TODAY)).then(snap => {
+      if (snap.exists()) setChecked(snap.data())
+    })
+  }, [])
 
   const saveItems = (next) => {
     setItems(next)
-    localStorage.setItem('routine_items', JSON.stringify(next))
+    setDoc(doc(db, 'routine_config', 'items'), next)
   }
 
   const toggle = (id) => {
     setChecked(prev => {
       const next = { ...prev, [id]: !prev[id] }
-      localStorage.setItem('routine_checks', JSON.stringify({ date: TODAY, checks: next }))
+      setDoc(doc(db, 'routine_checks', TODAY), next)
       return next
     })
   }
 
   const deleteItem = (id) => {
-    saveItems({ life: items.life.filter(i => i.id !== id), work: items.work.filter(i => i.id !== id) })
+    saveItems({
+      life: items.life.filter(i => i.id !== id),
+      work: items.work.filter(i => i.id !== id),
+    })
   }
 
   const addItem = (time, label) => {

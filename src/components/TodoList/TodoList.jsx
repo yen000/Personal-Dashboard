@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '../../firebase'
 import './TodoList.css'
 
-const PRIORITY_ORDER = ['high', 'medium', 'low']
+const PRIORITY_ORDER  = ['high', 'medium', 'low']
 const PRIORITY_SYMBOL = { high: '!!!', medium: '!!', low: '!' }
 const PRIORITY_COLOR  = { high: 'red', medium: 'yellow', low: 'green' }
 
@@ -11,28 +13,31 @@ const DEFAULT_TODOS = [
   { id: 3, text: 'Buy groceries',                  priority: 'low' },
 ]
 
-function load() {
-  try { return JSON.parse(localStorage.getItem('emergency_todos')) || DEFAULT_TODOS }
-  catch { return DEFAULT_TODOS }
-}
-
 export default function TodoList() {
-  const [todos, setTodos]     = useState(load)
+  const [todos, setTodos]     = useState([])
   const [input, setInput]     = useState('')
   const [priority, setPriority] = useState('medium')
+  const [loaded, setLoaded]   = useState(false)
 
-  const save = (list) => {
+  useEffect(() => {
+    getDoc(doc(db, 'todos', 'emergency')).then(snap => {
+      setTodos(snap.exists() ? snap.data().list : DEFAULT_TODOS)
+      setLoaded(true)
+    })
+  }, [])
+
+  const persist = (list) => {
     setTodos(list)
-    localStorage.setItem('emergency_todos', JSON.stringify(list))
+    setDoc(doc(db, 'todos', 'emergency'), { list })
   }
 
   const add = () => {
     if (!input.trim()) return
-    save([...todos, { id: Date.now(), text: input.trim(), priority }])
+    persist([...todos, { id: Date.now(), text: input.trim(), priority }])
     setInput('')
   }
 
-  const remove = (id) => save(todos.filter(t => t.id !== id))
+  const remove = (id) => persist(todos.filter(t => t.id !== id))
 
   const sorted = [...todos].sort(
     (a, b) => PRIORITY_ORDER.indexOf(a.priority) - PRIORITY_ORDER.indexOf(b.priority)
@@ -55,7 +60,7 @@ export default function TodoList() {
         <button className="todo-add-btn" onClick={add}>+</button>
       </div>
       <div className="todo-list">
-        {sorted.length === 0 && <div className="todo-empty">All clear — no urgent tasks.</div>}
+        {loaded && sorted.length === 0 && <div className="todo-empty">All clear — no urgent tasks.</div>}
         {sorted.map(todo => (
           <div key={todo.id} className={`todo-item priority-${PRIORITY_COLOR[todo.priority]}`}>
             <span className={`priority-badge pb-${PRIORITY_COLOR[todo.priority]}`}>
