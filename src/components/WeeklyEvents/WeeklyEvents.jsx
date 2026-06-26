@@ -57,18 +57,25 @@ export default function WeeklyEvents() {
     fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(r => {
-        if (!r.ok) throw new Error(r.status)
-        return r.json()
+      .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+      .then(({ ok, status, data }) => {
+        if (!ok) {
+          console.error('Calendar API error', status, data)
+          setError(`${status}: ${data?.error?.message ?? 'unknown'}`)
+          return
+        }
+        setEvents(data.items ?? [])
       })
-      .then(data => setEvents(data.items ?? []))
-      .catch(() => setError('fetch_failed'))
+      .catch(err => {
+        console.error('Calendar fetch failed', err)
+        setError('fetch_failed')
+      })
   }, [])
 
   const badge = error === 'no_token'
     ? 'Sign in to load'
-    : error === 'fetch_failed'
-    ? 'Failed to load'
+    : error
+    ? error
     : events === null
     ? 'Loading…'
     : `${events.length} events`
