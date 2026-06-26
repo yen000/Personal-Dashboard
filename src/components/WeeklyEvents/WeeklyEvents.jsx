@@ -78,7 +78,7 @@ export default function WeeklyEvents() {
     ? error
     : events === null
     ? 'Loading…'
-    : `${events.length} events`
+    : null
 
   function getEventsForDay(date) {
     if (!events) return []
@@ -94,7 +94,7 @@ export default function WeeklyEvents() {
     <div className="card weekly-events">
       <div className="card-title">
         <span className="icon">📅</span> Weekly Events
-        <span className="we-badge">{badge}</span>
+        {badge && <span className="we-badge">{badge}</span>}
       </div>
       <div className="week-list">
         {weekDays.map((day, i) => {

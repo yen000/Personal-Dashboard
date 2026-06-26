@@ -28,11 +28,25 @@
   border: 1px solid var(--border-light);
   border-radius: 6px;
   color: var(--text-secondary);
-  font-size: 11px;
-  padding: 7px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 8px;
   outline: none;
   cursor: pointer;
   font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.priority-select:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.priority-select:focus {
+  border-color: var(--accent);
 }
 
 .todo-add-btn {
