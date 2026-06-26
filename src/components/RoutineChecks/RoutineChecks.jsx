@@ -3,49 +3,72 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../../firebase'
 import './RoutineChecks.css'
 
-const TIMES = ['morning', 'evening', 'night']
-const TIME_LABELS = { morning: '☀️ Morning', evening: '🌆 Evening', night: '🌙 Night' }
+const PERIODS = ['morning', 'evening', 'night']
+const PERIOD_LABELS = { morning: '☀️ Morning', evening: '🌆 Evening', night: '🌙 Night' }
+const CATEGORIES = ['life', 'work']
+const CAT_LABELS = { life: '🌿 Life', work: '💼 Work' }
 
 const DEFAULT_ITEMS = {
-  life: [
-    { id: 'l-m-1', label: 'Drink water',    time: 'morning' },
-    { id: 'l-m-2', label: 'Take vitamin',   time: 'morning' },
-    { id: 'l-e-1', label: 'Drink water',    time: 'evening' },
-    { id: 'l-n-1', label: 'Leg massage',    time: 'night' },
-    { id: 'l-n-2', label: 'Face mask',      time: 'night' },
-    { id: 'l-n-3', label: 'Apply ointment', time: 'night' },
-  ],
-  work: [
-    { id: 'w-m-1', label: 'Daily LeetCode',    time: 'morning' },
-    { id: 'w-m-2', label: 'Trading book',       time: 'morning' },
-    { id: 'w-m-3', label: 'Work',               time: 'morning' },
-    { id: 'w-e-1', label: 'LeetCode ×2',        time: 'evening' },
-    { id: 'w-e-2', label: 'Work',               time: 'evening' },
-    { id: 'w-n-1', label: 'Trading QA book',    time: 'night' },
-    { id: 'w-n-2', label: 'C++ implementation', time: 'night' },
-  ],
+  morning: {
+    life: [
+      { id: 'l-m-1', label: 'Drink water' },
+      { id: 'l-m-2', label: 'Take vitamin' },
+    ],
+    work: [
+      { id: 'w-m-1', label: 'Daily LeetCode' },
+      { id: 'w-m-2', label: 'Trading book' },
+      { id: 'w-m-3', label: 'Work' },
+    ],
+  },
+  evening: {
+    life: [
+      { id: 'l-e-1', label: 'Drink water' },
+    ],
+    work: [
+      { id: 'w-e-1', label: 'LeetCode ×2' },
+      { id: 'w-e-2', label: 'Work' },
+    ],
+  },
+  night: {
+    life: [
+      { id: 'l-n-1', label: 'Leg massage' },
+      { id: 'l-n-2', label: 'Face mask' },
+      { id: 'l-n-3', label: 'Apply ointment' },
+    ],
+    work: [
+      { id: 'w-n-1', label: 'Trading QA book' },
+      { id: 'w-n-2', label: 'C++ implementation' },
+    ],
+  },
 }
 
 const TODAY = new Date().toISOString().slice(0, 10)
 
-function TimeBlock({ time, items, checked, onToggle, onDelete, onAdd }) {
+function getDefaultPeriod() {
+  const h = new Date().getHours()
+  if (h < 12) return 'morning'
+  if (h < 18) return 'evening'
+  return 'night'
+}
+
+function CategoryBlock({ period, cat, items, checked, onToggle, onDelete, onAdd }) {
   const [input, setInput] = useState('')
 
   const handleAdd = () => {
     const text = input.trim()
     if (!text) return
-    onAdd(time, text)
+    onAdd(period, cat, text)
     setInput('')
   }
 
   return (
-    <div className="time-block">
-      <div className="time-label">{TIME_LABELS[time]}</div>
+    <div className="routine-cat-block">
+      <div className="routine-cat-label">{CAT_LABELS[cat]}</div>
       {items.map(item => (
         <div key={item.id} className={`routine-item ${checked[item.id] ? 'checked' : ''}`}>
           <span className="check-box" onClick={() => onToggle(item.id)} />
           <span className="routine-label" onClick={() => onToggle(item.id)}>{item.label}</span>
-          <button className="routine-del" onClick={() => onDelete(item.id)}>×</button>
+          <button className="routine-del" onClick={() => onDelete(period, cat, item.id)}>×</button>
         </div>
       ))}
       <div className="routine-add-row">
@@ -63,16 +86,22 @@ function TimeBlock({ time, items, checked, onToggle, onDelete, onAdd }) {
 }
 
 export default function RoutineChecks() {
-  const [tab, setTab]         = useState('life')
+  const [tab, setTab]         = useState(getDefaultPeriod)
   const [items, setItems]     = useState(DEFAULT_ITEMS)
   const [checked, setChecked] = useState({})
 
   useEffect(() => {
-    // Load habit definitions
     getDoc(doc(db, 'routine_config', 'items')).then(snap => {
-      if (snap.exists()) setItems(snap.data())
+      if (snap.exists()) {
+        const data = snap.data()
+        if (data.morning) {
+          setItems(data)
+        } else {
+          // old structure detected — overwrite with new format
+          setDoc(doc(db, 'routine_config', 'items'), DEFAULT_ITEMS)
+        }
+      }
     })
-    // Load today's checks
     getDoc(doc(db, 'routine_checks', TODAY)).then(snap => {
       if (snap.exists()) setChecked(snap.data())
     })
@@ -91,19 +120,28 @@ export default function RoutineChecks() {
     })
   }
 
-  const deleteItem = (id) => {
+  const deleteItem = (period, cat, id) => {
     saveItems({
-      life: items.life.filter(i => i.id !== id),
-      work: items.work.filter(i => i.id !== id),
+      ...items,
+      [period]: {
+        ...items[period],
+        [cat]: items[period][cat].filter(i => i.id !== id),
+      },
     })
   }
 
-  const addItem = (time, label) => {
-    const id = `${tab}-${time}-${Date.now()}`
-    saveItems({ ...items, [tab]: [...items[tab], { id, label, time }] })
+  const addItem = (period, cat, label) => {
+    const id = `${period}-${cat}-${Date.now()}`
+    saveItems({
+      ...items,
+      [period]: {
+        ...items[period],
+        [cat]: [...items[period][cat], { id, label }],
+      },
+    })
   }
 
-  const tabItems  = items[tab]
+  const tabItems  = CATEGORIES.flatMap(c => items[tab]?.[c] || [])
   const doneCount = tabItems.filter(i => checked[i.id]).length
   const total     = tabItems.length
 
@@ -112,8 +150,15 @@ export default function RoutineChecks() {
       <div className="card-title"><span className="icon">✅</span> Routine</div>
 
       <div className="routine-tabs">
-        <button className={`tab-btn ${tab === 'life' ? 'active' : ''}`} onClick={() => setTab('life')}>🌿 Life</button>
-        <button className={`tab-btn ${tab === 'work' ? 'active' : ''}`} onClick={() => setTab('work')}>💼 Work</button>
+        {PERIODS.map(p => (
+          <button
+            key={p}
+            className={`tab-btn ${tab === p ? 'active' : ''}`}
+            onClick={() => setTab(p)}
+          >
+            {PERIOD_LABELS[p]}
+          </button>
+        ))}
         <span className="tab-counter">{doneCount}/{total}</span>
       </div>
 
@@ -121,11 +166,12 @@ export default function RoutineChecks() {
         <div className="routine-bar" style={{ width: `${total ? (doneCount / total) * 100 : 0}%` }} />
       </div>
 
-      {TIMES.map(time => (
-        <TimeBlock
-          key={`${tab}-${time}`}
-          time={time}
-          items={tabItems.filter(i => i.time === time)}
+      {CATEGORIES.map(cat => (
+        <CategoryBlock
+          key={cat}
+          period={tab}
+          cat={cat}
+          items={items[tab]?.[cat] || []}
           checked={checked}
           onToggle={toggle}
           onDelete={deleteItem}

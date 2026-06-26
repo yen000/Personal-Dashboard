@@ -8,7 +8,7 @@ import LeetcodeTracker from './components/LeetcodeTracker/LeetcodeTracker'
 import FinancialStatus from './components/FinancialStatus/FinancialStatus'
 import TodoList from './components/TodoList/TodoList'
 import CppArticle from './components/CppArticle/CppArticle'
-import SystemDesign from './components/SystemDesign/SystemDesign'
+// import SystemDesign from './components/SystemDesign/SystemDesign'
 
 export default function App() {
   return (
@@ -27,16 +27,16 @@ export default function App() {
       <div className="main-grid">
         <div className="col-panel">
           <WeeklyEvents />
-          <FinancialStatus />
+          <TodoList />
         </div>
         <div className="col-panel">
           <RoutineChecks />
-          <TodoList />
+          <FinancialStatus />
         </div>
         <div className="col-panel">
           <LeetcodeTracker />
           <CppArticle />
-          <SystemDesign />
+          {/* <SystemDesign /> */}
         </div>
       </div>
 
