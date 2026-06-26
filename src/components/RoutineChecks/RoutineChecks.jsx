@@ -39,6 +39,21 @@ const IconNote = () => (
     <circle cx="12" cy="11" r="2"/>
   </svg>
 )
+const IconPencil = () => (
+  <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 2l3 3L5 14H2v-3L11 2z"/>
+  </svg>
+)
+const IconUp = () => (
+  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 10l5-5 5 5"/>
+  </svg>
+)
+const IconDown = () => (
+  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6l5 5 5-5"/>
+  </svg>
+)
 
 const PERIODS = ['morning', 'evening', 'night']
 const PERIOD_ICONS = { morning: IconSun, evening: IconSunset, night: IconMoon }
@@ -162,8 +177,10 @@ const DEFAULT_SCHEDULE = {
   },
 }
 
-function CategoryBlock({ dayType, period, cat, items, checked, onToggle, onDelete, onAdd }) {
-  const [input, setInput] = useState('')
+function CategoryBlock({ dayType, period, cat, items, checked, onToggle, onDelete, onAdd, onEdit, onReorder }) {
+  const [input, setInput]       = useState('')
+  const [editingId, setEditingId] = useState(null)
+  const [editText, setEditText] = useState('')
 
   const handleAdd = () => {
     const text = input.trim()
@@ -172,19 +189,53 @@ function CategoryBlock({ dayType, period, cat, items, checked, onToggle, onDelet
     setInput('')
   }
 
+  const startEdit = (item) => {
+    setEditingId(item.id)
+    setEditText(item.label)
+  }
+
+  const confirmEdit = () => {
+    if (!editText.trim()) return
+    onEdit(dayType, period, cat, editingId, editText.trim())
+    setEditingId(null)
+  }
+
+  const cancelEdit = () => setEditingId(null)
+
   if (items.length === 0 && cat === 'music') return null
 
   return (
     <div className="routine-cat-block">
       <div className="routine-cat-label">
-      {(() => { const I = CAT_ICONS[cat]; return <I /> })()}
-      {' '}{CAT_LABELS[cat]}
-    </div>
-      {items.map(item => (
+        {(() => { const I = CAT_ICONS[cat]; return <I /> })()}
+        {' '}{CAT_LABELS[cat]}
+      </div>
+      {items.map((item, idx) => (
         <div key={item.id} className={`routine-item ${checked[item.id] ? 'checked' : ''}`}>
-          <span className="check-box" onClick={() => onToggle(item.id)} />
-          <span className="routine-label" onClick={() => onToggle(item.id)}>{item.label}</span>
-          <button className="routine-del" onClick={() => onDelete(dayType, period, cat, item.id)}>×</button>
+          {editingId === item.id ? (
+            <div className="routine-edit-row">
+              <input
+                className="routine-edit-input"
+                value={editText}
+                onChange={e => setEditText(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') confirmEdit(); if (e.key === 'Escape') cancelEdit() }}
+                autoFocus
+              />
+              <button className="routine-edit-confirm" onClick={confirmEdit}>✓</button>
+              <button className="routine-edit-cancel" onClick={cancelEdit}>✕</button>
+            </div>
+          ) : (
+            <>
+              <span className="check-box" onClick={() => onToggle(item.id)} />
+              <span className="routine-label" onClick={() => onToggle(item.id)}>{item.label}</span>
+              <div className="routine-item-actions">
+                <button className="routine-order-btn" onClick={() => onReorder(dayType, period, cat, idx, idx - 1)} disabled={idx === 0}><IconUp /></button>
+                <button className="routine-order-btn" onClick={() => onReorder(dayType, period, cat, idx, idx + 1)} disabled={idx === items.length - 1}><IconDown /></button>
+                <button className="routine-edit-btn" onClick={() => startEdit(item)}><IconPencil /></button>
+                <button className="routine-del" onClick={() => onDelete(dayType, period, cat, item.id)}>×</button>
+              </div>
+            </>
+          )}
         </div>
       ))}
       <div className="routine-add-row">
@@ -258,6 +309,33 @@ export default function RoutineChecks() {
     })
   }
 
+  const editItem = (dt, p, cat, id, newLabel) => {
+    saveSchedule({
+      ...schedule,
+      [dt]: {
+        ...schedule[dt],
+        [p]: {
+          ...schedule[dt][p],
+          [cat]: schedule[dt][p][cat].map(i => i.id === id ? { ...i, label: newLabel } : i),
+        },
+      },
+    })
+  }
+
+  const reorderItem = (dt, p, cat, fromIdx, toIdx) => {
+    const arr = [...schedule[dt][p][cat]]
+    if (toIdx < 0 || toIdx >= arr.length) return
+    const [moved] = arr.splice(fromIdx, 1)
+    arr.splice(toIdx, 0, moved)
+    saveSchedule({
+      ...schedule,
+      [dt]: {
+        ...schedule[dt],
+        [p]: { ...schedule[dt][p], [cat]: arr },
+      },
+    })
+  }
+
   const periodData  = schedule[dayType]?.[period] ?? {}
   const allItems    = CATEGORIES.flatMap(c => periodData[c] || [])
   const doneCount   = allItems.filter(i => checked[i.id]).length
@@ -312,6 +390,8 @@ export default function RoutineChecks() {
           onToggle={toggle}
           onDelete={deleteItem}
           onAdd={addItem}
+          onEdit={editItem}
+          onReorder={reorderItem}
         />
       ))}
     </div>

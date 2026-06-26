@@ -172,20 +172,79 @@
   text-decoration: line-through;
 }
 
+/* ── Item action group (edit, reorder, delete) ── */
+.routine-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.routine-item:hover .routine-item-actions { opacity: 1; }
+
+.routine-order-btn,
+.routine-edit-btn,
 .routine-del {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 16px;
   cursor: pointer;
-  padding: 0 2px;
+  padding: 2px 3px;
   line-height: 1;
-  opacity: 0;
-  transition: opacity 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.12s;
 }
 
-.routine-item:hover .routine-del { opacity: 1; }
-.routine-del:hover { color: var(--accent-red); }
+.routine-del { font-size: 16px; }
+
+.routine-order-btn:hover,
+.routine-edit-btn:hover  { color: var(--text-primary); background: var(--border); }
+.routine-del:hover       { color: var(--accent-red); background: rgba(248,113,113,0.08); }
+
+.routine-order-btn:disabled { opacity: 0.25; cursor: default; }
+.routine-order-btn:disabled:hover { background: none; color: var(--text-muted); }
+
+/* ── Inline edit row ── */
+.routine-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.routine-edit-input {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 3px 8px;
+  outline: none;
+}
+
+.routine-edit-confirm,
+.routine-edit-cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s, background 0.12s;
+}
+
+.routine-edit-confirm { color: var(--accent-green); }
+.routine-edit-cancel  { color: var(--text-muted); }
+.routine-edit-confirm:hover { background: rgba(52,211,153,0.12); }
+.routine-edit-cancel:hover  { color: var(--accent-red); background: rgba(248,113,113,0.08); }
 
 /* ── Add row ── */
 .routine-add-row {
