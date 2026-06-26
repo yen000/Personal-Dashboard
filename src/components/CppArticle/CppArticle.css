@@ -3,6 +3,14 @@
   flex-direction: column;
 }
 
+.cpp-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 20px 0;
+  text-align: center;
+}
+
 /* ── Tabs (pill/segment style matching SystemDesign) ── */
 .cpp-tabs {
   display: flex;

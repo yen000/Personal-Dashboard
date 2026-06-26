@@ -265,19 +265,20 @@ export default function RoutineChecks() {
 
   return (
     <div className="card routine-card">
-      <div className="card-title"><span className="icon">✅</span> Routine</div>
-
-      <div className="routine-day-tabs">
-        {DAY_TYPES.map(dt => (
-          <button
-            key={dt}
-            className={`day-tab-btn ${dayType === dt ? 'active' : ''} ${dt === todayType ? 'today' : ''}`}
-            onClick={() => setDayType(dt)}
-          >
-            {DAY_LABELS[dt]}
-            {dt === todayType && <span className="today-dot" />}
-          </button>
-        ))}
+      <div className="card-title">
+        <span className="icon">✅</span> Routine
+        <div className="routine-day-tabs">
+          {DAY_TYPES.map(dt => (
+            <button
+              key={dt}
+              className={`day-tab-btn ${dayType === dt ? 'active' : ''} ${dt === todayType ? 'today' : ''}`}
+              onClick={() => setDayType(dt)}
+            >
+              {DAY_LABELS[dt]}
+              {dt === todayType && <span className="today-dot" />}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="routine-tabs">

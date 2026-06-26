@@ -3,6 +3,14 @@ import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../firebase'
 import './TodoList.css'
 
+const IconMemo = () => (
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="1" width="10" height="13" rx="1.5"/>
+    <path d="M5 5h6M5 8h6M5 11h3"/>
+    <path d="M10 12l2 2 2-2v-3h-4v3z"/>
+  </svg>
+)
+
 const PRIORITY_ORDER  = ['high', 'medium', 'low']
 const PRIORITY_SYMBOL = { high: '!!!', medium: '!!', low: '!' }
 const PRIORITY_COLOR  = { high: 'red', medium: 'yellow', low: 'green' }
@@ -94,7 +102,7 @@ export default function TodoList() {
       </div>
 
       <div className="memo-divider">
-        <span className="memo-divider-label">📝 Memo</span>
+        <span className="memo-divider-label"><IconMemo /> Memo</span>
         {memos.length > 0 && (
           <button className="memo-clear" onClick={clearMemos}>clear all</button>
         )}

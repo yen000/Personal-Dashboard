@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../../firebase'
 import './CppArticle.css'
-import { DAILY_ARTICLE } from './cppArticleData'
 
 const SOURCES = [
   { title: 'TJSW on Medium', desc: 'C++ deep-dives and practical guides', url: 'https://tjsw.medium.com' },
@@ -10,12 +9,16 @@ const SOURCES = [
 ]
 
 export default function CppArticle() {
-  const [tab, setTab]     = useState('daily')
-  const [saved, setSaved] = useState([])
+  const [tab, setTab]       = useState('daily')
+  const [saved, setSaved]   = useState([])
+  const [article, setArticle] = useState(null)
 
   useEffect(() => {
     getDoc(doc(db, 'cpp_saved', 'links')).then(snap => {
       if (snap.exists()) setSaved(snap.data().list || [])
+    })
+    getDoc(doc(db, 'cpp_article', 'daily')).then(snap => {
+      if (snap.exists()) setArticle(snap.data())
     })
   }, [])
 
@@ -46,26 +49,30 @@ export default function CppArticle() {
 
       {tab === 'daily' && (
         <>
-          <div className="cpp-feat-wrap">
-            <a href={DAILY_ARTICLE.url} target="_blank" rel="noopener noreferrer" className="cpp-featured">
-              <div className="feat-header">
-                <span className="feat-tag">{DAILY_ARTICLE.tag}</span>
-                <span className="feat-source">{DAILY_ARTICLE.source}</span>
-                <span className="feat-date">{DAILY_ARTICLE.date}</span>
-              </div>
-              <div className="feat-title">{DAILY_ARTICLE.title}</div>
-              <ul className="feat-points">
-                {DAILY_ARTICLE.keyPoints.map((pt, i) => <li key={i}>{pt}</li>)}
-              </ul>
-              <div className="feat-url">{DAILY_ARTICLE.url.replace('https://', '')} →</div>
-            </a>
-            <button
-              className={`cpp-save-btn ${isSaved(DAILY_ARTICLE.url) ? 'is-saved' : ''}`}
-              onClick={() => saveLink(DAILY_ARTICLE.title, DAILY_ARTICLE.url)}
-            >
-              {isSaved(DAILY_ARTICLE.url) ? '✓ Saved' : '+ Save'}
-            </button>
-          </div>
+          {!article ? (
+            <div className="cpp-loading">Loading today's article…</div>
+          ) : (
+            <div className="cpp-feat-wrap">
+              <a href={article.url} target="_blank" rel="noopener noreferrer" className="cpp-featured">
+                <div className="feat-header">
+                  <span className="feat-tag">{article.tag}</span>
+                  <span className="feat-source">{article.source}</span>
+                  <span className="feat-date">{article.date}</span>
+                </div>
+                <div className="feat-title">{article.title}</div>
+                <ul className="feat-points">
+                  {(article.keyPoints || []).map((pt, i) => <li key={i}>{pt}</li>)}
+                </ul>
+                <div className="feat-url">{article.url.replace('https://', '')} →</div>
+              </a>
+              <button
+                className={`cpp-save-btn ${isSaved(article.url) ? 'is-saved' : ''}`}
+                onClick={() => saveLink(article.title, article.url)}
+              >
+                {isSaved(article.url) ? '✓ Saved' : '+ Save'}
+              </button>
+            </div>
+          )}
         </>
       )}
 
