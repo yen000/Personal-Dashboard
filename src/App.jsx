@@ -1,3 +1,7 @@
+import { useState, useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from './firebase'
+import Login from './components/Login/Login'
 import './App.css'
 import Profile from './components/Profile/Profile'
 import DateTime from './components/DateTime/DateTime'
@@ -11,6 +15,19 @@ import CppArticle from './components/CppArticle/CppArticle'
 // import SystemDesign from './components/SystemDesign/SystemDesign'
 
 export default function App() {
+  const [user, setUser] = useState(null)
+  const [checking, setChecking] = useState(true)
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (u) => {
+      setUser(u)
+      setChecking(false)
+    })
+  }, [])
+
+  if (checking) return null
+  if (!user) return <Login onLogin={setUser} />
+
   return (
     <div className="dashboard">
 
