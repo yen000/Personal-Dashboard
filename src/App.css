@@ -38,8 +38,6 @@ body {
 #root { min-height: 100vh; }
 
 .dashboard {
-  max-width: 1500px;
-  margin: 0 auto;
   padding: 20px 24px;
   display: flex;
   flex-direction: column;
