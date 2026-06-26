@@ -27,12 +27,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: border-color 0.15s;
-}
-
-.lc-problem.done {
-  border-color: var(--accent-green);
-  opacity: 0.6;
 }
 
 .lc-top-row {
@@ -41,28 +35,13 @@
   gap: 10px;
 }
 
-/* Done toggle button */
-.lc-done-btn {
-  background: none;
-  border: 1.5px solid var(--text-muted);
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 11px;
+.lc-num {
+  font-size: 10px;
+  font-weight: 700;
   color: var(--text-muted);
-  cursor: pointer;
+  min-width: 18px;
+  padding-top: 2px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1px;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-
-.lc-done-btn.checked {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-  background: rgba(52, 211, 153, 0.1);
 }
 
 .lc-info { flex: 1; min-width: 0; }
@@ -75,6 +54,7 @@
 }
 
 .lc-id    { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+
 .lc-title {
   font-size: 14px;
   font-weight: 500;
@@ -129,15 +109,46 @@
   transition: border-color 0.15s;
   box-sizing: border-box;
 }
-
-.lc-feedback:focus {
-  outline: none;
-  border-color: var(--accent);
-  color: var(--text-primary);
-}
-
+.lc-feedback:focus { outline: none; border-color: var(--accent); color: var(--text-primary); }
 .lc-feedback::placeholder { color: var(--text-muted); }
 
+/* Save / Clear buttons */
+.lc-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.lc-save-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s, background 0.15s;
+}
+.lc-save-btn:disabled { opacity: 0.35; cursor: default; }
+.lc-save-btn.saved    { background: var(--accent-green); }
+.lc-save-btn:not(:disabled):hover { opacity: 0.85; }
+
+.lc-clear-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 4px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lc-clear-btn:hover { color: var(--accent-red); border-color: var(--accent-red); }
+
+/* Footer */
 .lc-footer {
   margin-top: 12px;
   text-align: right;
@@ -150,5 +161,4 @@
   opacity: 0.6;
   transition: opacity 0.15s;
 }
-
 .lc-open:hover { opacity: 1; }
