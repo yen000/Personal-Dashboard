@@ -74,7 +74,7 @@ export default function TodoList() {
 
   return (
     <div className="card todo-card">
-      <div className="card-title"><span className="icon">🚨</span> Emergency To-Do</div>
+      <div className="card-title"><span className="icon">🚨</span> To-Do List</div>
       <div className="todo-add">
         <input
           className="todo-input"
@@ -84,7 +84,7 @@ export default function TodoList() {
           onKeyDown={e => e.key === 'Enter' && add()}
         />
         <select className="priority-select" value={priority} onChange={e => setPriority(e.target.value)}>
-          {PRIORITY_ORDER.map(p => <option key={p} value={p}>{p}</option>)}
+          {PRIORITY_ORDER.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
         </select>
         <button className="todo-add-btn" onClick={add}>+</button>
       </div>

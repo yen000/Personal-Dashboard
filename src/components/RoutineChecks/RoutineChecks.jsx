@@ -202,7 +202,7 @@ function CategoryBlock({ dayType, period, cat, items, checked, onToggle, onDelet
 
   const cancelEdit = () => setEditingId(null)
 
-  if (items.length === 0 && cat === 'music') return null
+  if (cat === 'music' && items.length === 0 && !(period === 'evening' && (dayType === 'saturday' || dayType === 'sunday'))) return null
 
   return (
     <div className="routine-cat-block">
@@ -336,10 +336,11 @@ export default function RoutineChecks() {
     })
   }
 
-  const periodData  = schedule[dayType]?.[period] ?? {}
-  const allItems    = CATEGORIES.flatMap(c => periodData[c] || [])
-  const doneCount   = allItems.filter(i => checked[i.id]).length
-  const total       = allItems.length
+  const periodData   = schedule[dayType]?.[period] ?? {}
+  const allItems     = CATEGORIES.flatMap(c => periodData[c] || [])
+  const doneCount    = allItems.filter(i => checked[i.id]).length
+  const total        = allItems.length
+  const currentPeriod = getDefaultPeriod()
 
   return (
     <div className="card routine-card">
@@ -369,6 +370,7 @@ export default function RoutineChecks() {
               onClick={() => setPeriod(p)}
             >
               <PIcon /> {PERIOD_LABELS[p]}
+              {p === currentPeriod && <span className="period-dot" />}
             </button>
           )
         })}

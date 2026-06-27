@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './WeeklyEvents.css'
 
-const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] // indexed by getDay()
 
 const COLOR_MAP = {
   1: 'accent', 2: 'green',  3: 'accent', 4: 'pink',
@@ -28,7 +28,8 @@ export default function WeeklyEvents() {
 
   const today = new Date()
   const weekStart = new Date(today)
-  weekStart.setDate(today.getDate() - today.getDay())
+  const dow = today.getDay()
+  weekStart.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1)) // Monday start
   weekStart.setHours(0, 0, 0, 0)
   const weekEnd = new Date(weekStart)
   weekEnd.setDate(weekStart.getDate() + 7)
@@ -103,7 +104,7 @@ export default function WeeklyEvents() {
 
           return (
             <div key={i} className={`week-row ${isToday ? 'today' : ''}`}>
-              <span className="row-day-name">{DAYS_SHORT[i]}</span>
+              <span className="row-day-name">{DAYS_SHORT[day.getDay()]}</span>
               <span className={`row-day-num ${isToday ? 'today-num' : ''}`}>
                 {day.getDate()}
               </span>

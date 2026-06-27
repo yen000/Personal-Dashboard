@@ -35,7 +35,7 @@
   font-weight: 600;
 }
 
-.today-dot {
+.today-dot, .period-dot {
   display: inline-block;
   width: 5px;
   height: 5px;
