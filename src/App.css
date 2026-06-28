@@ -454,4 +454,7 @@ body {
   /* ── Cards ── */
   .card { padding: 16px; }
   .card-title { font-size: 16px; margin-bottom: 12px; }
+
+  /* ── Mobile-only hidden sections ── */
+  .mobile-hide { display: none; }
 }

@@ -135,15 +135,15 @@ export default function App() {
         <main className="page-content">
           {activePage === 'dashboard' && (
             <>
-              <div className="dash-top"><Goals /></div>
+              <div className="dash-top mobile-hide"><Goals /></div>
               <div className="main-grid">
                 <div className="col-panel">
-                  <WeeklyEvents />
+                  <div className="mobile-hide"><WeeklyEvents /></div>
                   <TodoList />
                 </div>
                 <div className="col-panel">
                   <RoutineChecks />
-                  <FinancialStatus />
+                  <div className="mobile-hide"><FinancialStatus /></div>
                 </div>
                 <div className="col-panel">
                   <LeetcodeTracker />
