@@ -331,3 +331,127 @@ body {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+/* ════════════════════════════════════════
+   RESPONSIVE — Tablet  (769 – 1100 px)
+   ════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE — Mobile  (≤ 768 px)
+   ════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Allow page to scroll naturally */
+  body {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #root { height: auto; min-height: 100vh; }
+
+  .app-shell {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding-bottom: 62px; /* space for bottom nav */
+  }
+
+  /* ── Sidebar → bottom tab bar ── */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom));
+    border-right: none;
+    border-top: 1px solid var(--border);
+    z-index: 100;
+    gap: 0;
+  }
+
+  .sidebar-brand,
+  .sidebar-bottom { display: none; }
+
+  .sidebar-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    flex: 1;
+    gap: 0;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 20px;
+    flex: 1;
+  }
+
+  .nav-label { font-size: 10px; }
+  .nav-icon  { width: auto; font-size: 18px; }
+
+  /* ── Main area ── */
+  .main-area {
+    overflow: visible;
+    flex: none;
+    width: 100%;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 0 14px;
+    height: 50px;
+  }
+
+  .topbar-title { font-size: 15px; min-width: auto; }
+
+  /* hide date text, keep just the clock */
+  .topbar-date svg,
+  .topbar-date > span:first-of-type,
+  .topbar-sep { display: none; }
+
+  .topbar-date {
+    padding: 5px 10px;
+    font-size: 12px;
+    gap: 0;
+  }
+
+  /* ── Page content ── */
+  .page-content {
+    overflow-y: visible;
+    padding: 12px 12px 12px;
+    gap: 12px;
+    flex: none;
+  }
+
+  .dash-top { width: 100%; }
+
+  /* ── Grid → single column ── */
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .col-panel { gap: 12px; }
+
+  /* ── Cards ── */
+  .card { padding: 16px; }
+  .card-title { font-size: 16px; margin-bottom: 12px; }
+}

@@ -4,6 +4,12 @@
   gap: 0;
 }
 
+@media (max-width: 768px) {
+  .routine-day-tabs { gap: 2px; }
+  .day-tab-btn { font-size: 12px; padding: 4px 8px; }
+  .routine-tabs { flex-wrap: wrap; gap: 4px; }
+}
+
 /* ── Day type tabs (inline with title) ── */
 .routine-day-tabs {
   display: flex;

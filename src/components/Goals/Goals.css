@@ -11,6 +11,13 @@
   flex: 1;
 }
 
+@media (max-width: 768px) {
+  .goals-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
 .goal-card {
   background: var(--bg-input);
   border-radius: 8px;
