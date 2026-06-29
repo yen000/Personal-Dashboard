@@ -347,20 +347,27 @@ body {
    ════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* Allow page to scroll naturally */
+  /* Allow page to scroll naturally, clamp horizontal overflow */
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
   body {
     height: auto;
     overflow-x: hidden;
     overflow-y: auto;
+    max-width: 100vw;
   }
-  #root { height: auto; min-height: 100vh; }
+  #root { height: auto; min-height: 100vh; max-width: 100vw; overflow-x: hidden; }
 
   .app-shell {
     flex-direction: column;
     height: auto;
     min-height: 100vh;
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
     padding-bottom: 62px; /* space for bottom nav */
+    max-width: 100vw;
   }
 
   /* ── Sidebar → bottom tab bar ── */
@@ -397,7 +404,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 3px;
-    padding: 6px 20px;
+    padding: 6px 4px;
     flex: 1;
   }
 
@@ -406,9 +413,11 @@ body {
 
   /* ── Main area ── */
   .main-area {
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
     flex: none;
     width: 100%;
+    max-width: 100vw;
   }
 
   /* ── Topbar ── */
@@ -435,10 +444,13 @@ body {
 
   /* ── Page content ── */
   .page-content {
+    overflow-x: hidden;
     overflow-y: visible;
     padding: 12px 12px 12px;
     gap: 12px;
     flex: none;
+    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   .dash-top { width: 100%; }
