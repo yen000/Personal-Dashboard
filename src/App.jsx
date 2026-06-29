@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from './firebase'
+import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { auth, provider } from './firebase'
 import Login from './components/Login/Login'
 import './App.css'
 import Goals from './components/Goals/Goals'
@@ -67,9 +67,24 @@ export default function App() {
   const now = useNow()
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (u) => {
+    return onAuthStateChanged(auth, async (u) => {
       setUser(u)
       setChecking(false)
+      if (u) {
+        const token = localStorage.getItem('cal_token')
+        const exp   = parseInt(localStorage.getItem('cal_token_exp') || '0', 10)
+        if (!token || Date.now() >= exp) {
+          try {
+            const result     = await signInWithPopup(auth, provider)
+            const credential = GoogleAuthProvider.credentialFromResult(result)
+            const newToken   = credential?.accessToken
+            if (newToken) {
+              localStorage.setItem('cal_token', newToken)
+              localStorage.setItem('cal_token_exp', Date.now() + 3500 * 1000)
+            }
+          } catch (_) { /* token stays stale; WeeklyEvents shows "Sign in to load" */ }
+        }
+      }
     })
   }, [])
 
